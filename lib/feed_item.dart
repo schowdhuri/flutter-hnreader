@@ -21,7 +21,7 @@ class FeedItem extends StatelessWidget {
       title: Column(
         children: <Widget>[
           Text(
-            hnItem.title,
+            hnItem.title.trim(),
             style: titleStyle,
           ),
           SizedBox(height: 8),
