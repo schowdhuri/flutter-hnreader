@@ -72,7 +72,10 @@ class _HNAppState extends State<HNApp> {
           backgroundColor: Colors.deepOrangeAccent,
         ),
         body: SafeArea(
-          child: Feed(_stories),
+          child: Feed(
+            _stories,
+            onRefresh: fetchStories,
+          ),
         ),
         bottomNavigationBar: BotNavBar(handleChangePage),
       ),
