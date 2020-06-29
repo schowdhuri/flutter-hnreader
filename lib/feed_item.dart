@@ -6,6 +6,10 @@ class FeedItem extends StatelessWidget {
   final onTap;
   FeedItem(this.hnItem, {this.onTap, Key key}) : super(key: key);
 
+  handleOpenStory() {
+    onTap(this.hnItem);
+  }
+
   @override
   Widget build(BuildContext context) {
     final titleStyle = TextStyle(
@@ -16,7 +20,7 @@ class FeedItem extends StatelessWidget {
       fontSize: 14,
     );
     return ListTile(
-      onTap: onTap,
+      onTap: handleOpenStory,
       contentPadding: EdgeInsets.all(10),
       title: Column(
         children: <Widget>[

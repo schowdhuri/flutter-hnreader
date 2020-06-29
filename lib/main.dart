@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hnreader/categories.dart';
-import 'package:hnreader/feed.dart';
-import 'package:hnreader/header.dart';
-import 'package:hnreader/navbar.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:hnreader/hnitem.dart';
+import 'package:hnreader/routes.dart';
+import 'package:hnreader/home_view.dart';
 
 void main() => runApp(HNApp());
 
@@ -66,18 +65,11 @@ class _HNAppState extends State<HNApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "HN Reader",
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("HN Reader"),
-          backgroundColor: Colors.deepOrangeAccent,
-        ),
-        body: SafeArea(
-          child: Feed(
-            _stories,
-            onRefresh: fetchStories,
-          ),
-        ),
-        bottomNavigationBar: BotNavBar(handleChangePage),
+      onGenerateRoute: Routes.generateRoutes,
+      home: HomeView(
+        fetchStories: fetchStories,
+        onChangePage: handleChangePage,
+        stories: _stories,
       ),
     );
   }

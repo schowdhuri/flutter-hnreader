@@ -4,11 +4,15 @@ import 'package:hnreader/feed_item.dart';
 import 'package:hnreader/hnitem.dart';
 
 class Feed extends StatelessWidget {
-  List<HNItem> stories;
+  final List<HNItem> stories;
   final onRefresh;
-  Feed(this.stories, {this.onRefresh, Key key}) : super(key: key);
-
-  handleOpenStory(HNItem story) => () {};
+  final onOpenStory;
+  Feed({
+    @required this.stories,
+    @required this.onRefresh,
+    @required this.onOpenStory,
+    Key key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +24,7 @@ class Feed extends StatelessWidget {
               itemBuilder: (BuildContext ctx, int index) {
                 return FeedItem(
                   stories[index],
-                  onTap: handleOpenStory(stories[index]),
+                  onTap: onOpenStory,
                 );
               },
               separatorBuilder: (BuildContext ctx, int index) => Divider(),
