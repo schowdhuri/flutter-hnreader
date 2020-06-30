@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:hnreader/hnitem.dart';
 
 class FeedItem extends StatelessWidget {
@@ -23,6 +24,7 @@ class FeedItem extends StatelessWidget {
       onTap: handleOpenStory,
       contentPadding: EdgeInsets.all(10),
       title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             hnItem.title.trim(),

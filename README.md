@@ -3,7 +3,7 @@
 - [x] Feed
 - [x] Tab switching
 - [x] Pull to Refresh
-- [ ] Detail view
-- [ ] Routing
+- [x] Detail view
+- [x] Routing
 - [ ] Linkoff
 - [ ] Infinite Scroll

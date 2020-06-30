@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hnreader/hnitem.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:hnreader/hnitem.dart';
+import 'package:hnreader/hnstory_details.dart';
 
 class StoryView extends StatefulWidget {
   final HNItem story;
@@ -15,23 +16,23 @@ class StoryView extends StatefulWidget {
 
 class _StoryViewState extends State<StoryView> {
   final HNItem story;
-  Map<String, dynamic> storyData;
+  HNStory storyDetails;
 
   _StoryViewState(this.story);
 
-  Future<Map<String, dynamic>> fetchItem(int id) async {
+  Future<HNStory> fetchItem(int id) async {
     final http.Response response =
         await http.get("https://hacker-news.firebaseio.com/v0/item/$id.json");
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
-      if (data != null && data["kids"] != null) {
-        List<int> kids = List<int>.from(data["kids"]);
-        List<Future<Map<String, dynamic>>> futures = kids.map((int kid) {
-          return fetchItem(kid);
-        }).toList();
-        data["kids"] = await Future.wait(futures);
-      }
-      return data;
+      if (data == null) return null;
+      final HNStory story = HNStory.fromJSON(data);
+      List<Future<HNStory>> futures = story.kids.map((int kid) {
+        return fetchItem(kid);
+      }).toList();
+      List<HNStory> kidsDetails = await Future.wait(futures);
+      story.kidsDetails = kidsDetails;
+      return story;
     }
     throw Exception("Failed to fetch item $id");
   }
@@ -39,11 +40,109 @@ class _StoryViewState extends State<StoryView> {
   Future<void> fetchStory() async {
     print("Fetching ${story.id}");
     setState(() {
-      storyData = null;
+      storyDetails = null;
     });
-    storyData = await fetchItem(story.id);
-    print(storyData);
+    storyDetails = await fetchItem(story.id);
     setState(() {});
+  }
+
+  Widget buildStoryTitle(HNStory storyDetails) {
+    print(storyDetails.title);
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(top: 10, bottom: 10),
+            child: Text(
+              storyDetails.title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          ),
+          Row(
+            children: <Widget>[
+              Text(
+                "${storyDetails.score} points by ${storyDetails.by}",
+                style: TextStyle(
+                  color: Colors.blueGrey,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          storyDetails.text != null
+              ? Html(
+                  data: storyDetails.text,
+                  defaultTextStyle: TextStyle(
+                    fontSize: 14,
+                  ),
+                )
+              : Text(""),
+          SizedBox(
+            height: 10,
+            child: Divider(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildCommentTree(HNStory storyDetails, {int depth}) {
+    Widget buildComment(HNStory storyDetails) {
+      return storyDetails.text != null
+          ? Padding(
+              padding: EdgeInsets.fromLTRB(10 + 20.0 * depth, 10, 10, 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.comment,
+                        color: Colors.blueGrey,
+                        size: 14,
+                      ),
+                      SizedBox(width: 5),
+                      Text(
+                        storyDetails.by,
+                        style: TextStyle(
+                          color: Colors.blueGrey,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Html(
+                    data: storyDetails.text,
+                    defaultTextStyle: TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Text("");
+    }
+
+    if (depth == null) {
+      depth = 0;
+    }
+    if (storyDetails.kidsDetails.length > 0) {
+      return Column(
+        children: <Widget>[
+          buildComment(storyDetails),
+          for (HNStory kid in storyDetails.kidsDetails)
+            buildCommentTree(kid, depth: depth + 1)
+        ],
+      );
+    }
+    return buildComment(storyDetails);
   }
 
   @override
@@ -58,29 +157,12 @@ class _StoryViewState extends State<StoryView> {
         title: Text(story.title),
         backgroundColor: Colors.deepOrangeAccent,
       ),
-      body: storyData != null
+      body: storyDetails != null
           ? ListView(
               children: <Widget>[
-                storyData["text"] != null
-                    ? Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Html(
-                          data: storyData["text"],
-                        ),
-                      )
-                    : Text(""),
-                for (var kid in storyData["kids"])
-                  kid["text"] != null
-                      ? Container(
-                          margin: EdgeInsets.fromLTRB(10, 5, 5, 10),
-                          child: Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Html(
-                              data: kid["text"],
-                            ),
-                          ),
-                        )
-                      : Text("")
+                buildStoryTitle(storyDetails),
+                for (HNStory kid in storyDetails.kidsDetails)
+                  buildCommentTree(kid)
               ],
             )
           : Center(
