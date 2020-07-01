@@ -14,8 +14,9 @@ class HNApp extends StatefulWidget {
 }
 
 class _HNAppState extends State<HNApp> {
-  Category _page = categories[0];
+  Category category = Category.list[0];
   List<HNItem> _stories = [];
+  String _error;
 
   Future<HNItem> fetchItem(int id) async {
     print("Fetching item #$id");
@@ -30,26 +31,32 @@ class _HNAppState extends State<HNApp> {
   }
 
   Future<void> fetchStories() async {
-    print("Fetching ${_page.name} stories...");
-    final http.Response response = await http.get(_page.url);
-    if (response.statusCode == 200) {
-      print("Response OK");
-      List<int> storyIds = List<int>.from(json.decode(response.body));
-      List<int> page = storyIds.sublist(0, 10);
-      List<Future<HNItem>> futures = page.map((int id) {
-        return fetchItem(id);
-      }).toList();
-      _stories = await Future.wait(futures);
-      print("${_stories.length} stories fetched");
-      setState(() {});
-    } else {
-      throw Exception("Failed to load feed");
+    print("Fetching ${category.name} stories...");
+    _error = null;
+    try {
+      final http.Response response = await http.get(category.url);
+
+      if (response.statusCode == 200) {
+        print("Response OK");
+        List<int> storyIds = List<int>.from(json.decode(response.body));
+        List<int> page = storyIds.sublist(0, 10);
+        List<Future<HNItem>> futures = page.map((int id) {
+          return fetchItem(id);
+        }).toList();
+        _stories = await Future.wait(futures);
+        print("${_stories.length} stories fetched");
+        setState(() {});
+        return;
+      }
+    } catch (ex) {
+      _error = ex.toString();
     }
+    throw Exception("Failed to load feed");
   }
 
-  handleChangePage(Category page) {
+  handleChangePage(Category category) {
     setState(() {
-      _page = page;
+      this.category = category;
       _stories = [];
       fetchStories();
     });
@@ -67,10 +74,11 @@ class _HNAppState extends State<HNApp> {
       title: "HN Reader",
       onGenerateRoute: Routes.generateRoutes,
       home: HomeView(
-        fetchStories: fetchStories,
-        onChangePage: handleChangePage,
-        stories: _stories,
-      ),
+          fetchStories: fetchStories,
+          onChangePage: handleChangePage,
+          stories: _stories,
+          category: category,
+          error: _error),
     );
   }
 }

@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:hnreader/categories.dart';
 import 'package:hnreader/hnitem.dart';
 
 class FeedItem extends StatelessWidget {
   final HNItem hnItem;
+  final Category category;
   final onTap;
-  FeedItem(this.hnItem, {this.onTap, Key key}) : super(key: key);
+  FeedItem(
+    this.hnItem, {
+    @required this.category,
+    @required this.onTap,
+    Key key,
+  }) : super(key: key);
 
   handleOpenStory() {
     onTap(this.hnItem);
@@ -34,22 +41,29 @@ class FeedItem extends StatelessWidget {
           Row(
             children: <Widget>[
               Text(
-                "${hnItem.score} points | ",
+                "${hnItem.score} points",
                 style: subTextStyle,
               ),
               Text(
-                "By ${hnItem.by} | ",
+                " | By ${hnItem.by}",
                 style: subTextStyle,
               ),
-              Text(
-                "${hnItem.descendants} comments",
-                style: subTextStyle,
-              )
+              category.id != Category.JOBS.id
+                  ? Text(
+                      " | ${hnItem.descendants} comments",
+                      style: subTextStyle,
+                    )
+                  : Text(""),
             ],
           ),
         ],
       ),
-      trailing: Icon(Icons.chevron_right),
+      trailing: category.id != Category.JOBS.id
+          ? Icon(Icons.chevron_right)
+          : Icon(
+              Icons.launch,
+              size: 18,
+            ),
     );
   }
 }

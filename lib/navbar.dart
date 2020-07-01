@@ -16,7 +16,7 @@ class _BotNavBarState extends State<BotNavBar> {
     setState(() {
       _currentPage = newPage;
     });
-    onChange(categories[newPage]);
+    onChange(Category.list[newPage]);
   }
 
   @override
@@ -29,7 +29,7 @@ class _BotNavBarState extends State<BotNavBar> {
       selectedItemColor: Colors.deepOrangeAccent,
       unselectedItemColor: Colors.grey,
       items: <BottomNavigationBarItem>[
-        for (Category category in categories)
+        for (Category category in Category.list)
           BottomNavigationBarItem(
             icon: category.icon,
             title: Text(category.name),

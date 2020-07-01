@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:hnreader/hnitem.dart';
 import 'package:hnreader/hnstory_details.dart';
+import 'package:hnreader/utils.dart';
 
 class StoryView extends StatefulWidget {
   final HNItem story;
@@ -47,7 +48,15 @@ class _StoryViewState extends State<StoryView> {
   }
 
   Widget buildStoryTitle(HNStory storyDetails) {
-    print(storyDetails.title);
+    final titleStyle = TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 16,
+    );
+    final titleButtonStyle = TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 16,
+      color: Colors.blueAccent,
+    );
     return Padding(
       padding: EdgeInsets.all(10),
       child: Column(
@@ -55,13 +64,31 @@ class _StoryViewState extends State<StoryView> {
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(top: 10, bottom: 10),
-            child: Text(
-              storyDetails.title,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
+            child: storyDetails.url != null
+                ? FlatButton(
+                    padding: EdgeInsets.all(0),
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          storyDetails.title,
+                          style: titleButtonStyle,
+                        ),
+                        SizedBox(width: 10),
+                        Icon(
+                          Icons.launch,
+                          color: Colors.blueGrey,
+                          size: 16,
+                        ),
+                      ],
+                    ),
+                    onPressed: () {
+                      Utils.launchURL(storyDetails.url);
+                    },
+                  )
+                : Text(
+                    storyDetails.title,
+                    style: titleStyle,
+                  ),
           ),
           Row(
             children: <Widget>[
@@ -81,6 +108,9 @@ class _StoryViewState extends State<StoryView> {
                   defaultTextStyle: TextStyle(
                     fontSize: 14,
                   ),
+                  onLinkTap: (url) {
+                    Utils.launchURL(url);
+                  },
                 )
               : Text(""),
           SizedBox(
@@ -119,11 +149,13 @@ class _StoryViewState extends State<StoryView> {
                   ),
                   SizedBox(height: 10),
                   Html(
-                    data: storyDetails.text,
-                    defaultTextStyle: TextStyle(
-                      fontSize: 14,
-                    ),
-                  ),
+                      data: storyDetails.text,
+                      defaultTextStyle: TextStyle(
+                        fontSize: 14,
+                      ),
+                      onLinkTap: (url) {
+                        Utils.launchURL(url);
+                      }),
                 ],
               ),
             )
@@ -147,6 +179,7 @@ class _StoryViewState extends State<StoryView> {
 
   @override
   void initState() {
+    super.initState();
     fetchStory();
   }
 

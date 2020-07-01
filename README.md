@@ -5,5 +5,6 @@
 - [x] Pull to Refresh
 - [x] Detail view
 - [x] Routing
-- [ ] Linkoff
+- [x] Linkoff from within stories
+- [x] Jobs feed
 - [ ] Infinite Scroll

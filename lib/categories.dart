@@ -12,31 +12,36 @@ class Category {
     this.url,
     this.icon,
   });
-}
 
-List<Category> categories = <Category>[
-  Category(
+  static final Category TOP = Category(
     id: "top",
     name: "Top",
     icon: Icon(Icons.trending_up),
     url: "https://hacker-news.firebaseio.com/v0/topstories.json",
-  ),
-  Category(
+  );
+  static final Category JOBS = Category(
     id: "jobs",
     name: "Jobs",
     icon: Icon(Icons.business_center),
     url: "https://hacker-news.firebaseio.com/v0/jobstories.json",
-  ),
-  Category(
+  );
+  static final Category ASK = Category(
     id: "ask",
     name: "Ask",
     icon: Icon(Icons.question_answer),
     url: "https://hacker-news.firebaseio.com/v0/askstories.json",
-  ),
-  Category(
+  );
+  static final NEW = Category(
     id: "new",
     name: "New",
     icon: Icon(Icons.new_releases),
     url: "https://hacker-news.firebaseio.com/v0/newstories.json",
-  ),
-];
+  );
+
+  static final List<Category> list = <Category>[
+    TOP,
+    JOBS,
+    ASK,
+    NEW,
+  ];
+}

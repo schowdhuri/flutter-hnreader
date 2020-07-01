@@ -7,15 +7,25 @@ class Feed extends StatelessWidget {
   final List<HNItem> stories;
   final onRefresh;
   final onOpenStory;
+  final Category category;
+  final String error;
+
   Feed({
     @required this.stories,
     @required this.onRefresh,
     @required this.onOpenStory,
+    @required this.category,
+    @required this.error,
     Key key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    if (error != null) {
+      return Center(
+        child: Text(error),
+      );
+    }
     return stories.length > 0
         ? RefreshIndicator(
             onRefresh: onRefresh,
@@ -25,6 +35,7 @@ class Feed extends StatelessWidget {
                 return FeedItem(
                   stories[index],
                   onTap: onOpenStory,
+                  category: category,
                 );
               },
               separatorBuilder: (BuildContext ctx, int index) => Divider(),
