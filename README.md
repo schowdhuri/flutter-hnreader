@@ -8,3 +8,4 @@
 - [x] Linkoff from within stories
 - [x] Jobs feed
 - [ ] Infinite Scroll
+- [ ] Collapsible comment threads

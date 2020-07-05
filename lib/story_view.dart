@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hnreader/collapsible_panel.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_html/flutter_html.dart';
@@ -69,9 +70,11 @@ class _StoryViewState extends State<StoryView> {
                     padding: EdgeInsets.all(0),
                     child: Row(
                       children: <Widget>[
-                        Text(
-                          storyDetails.title,
-                          style: titleButtonStyle,
+                        Flexible(
+                          child: Text(
+                            storyDetails.title,
+                            style: titleButtonStyle,
+                          ),
                         ),
                         SizedBox(width: 10),
                         Icon(
@@ -123,40 +126,36 @@ class _StoryViewState extends State<StoryView> {
   }
 
   Widget buildCommentTree(HNStory storyDetails, {int depth}) {
-    Widget buildComment(HNStory storyDetails) {
+    Widget buildComment(HNStory storyDetails, {List<Widget> children}) {
       return storyDetails.text != null
           ? Padding(
               padding: EdgeInsets.fromLTRB(10 + 20.0 * depth, 10, 10, 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.comment,
+              child: Collapsible(
+                header: Row(
+                  children: <Widget>[
+                    Icon(
+                      Icons.comment,
+                      color: Colors.blueGrey,
+                      size: 14,
+                    ),
+                    SizedBox(width: 5),
+                    Text(
+                      storyDetails.by,
+                      style: TextStyle(
                         color: Colors.blueGrey,
-                        size: 14,
+                        fontSize: 12,
                       ),
-                      SizedBox(width: 5),
-                      Text(
-                        storyDetails.by,
-                        style: TextStyle(
-                          color: Colors.blueGrey,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Html(
-                      data: storyDetails.text,
-                      defaultTextStyle: TextStyle(
-                        fontSize: 14,
-                      ),
-                      onLinkTap: (url) {
-                        Utils.launchURL(url);
-                      }),
-                ],
+                    ),
+                  ],
+                ),
+                child: Html(
+                    data: storyDetails.text,
+                    defaultTextStyle: TextStyle(
+                      fontSize: 14,
+                    ),
+                    onLinkTap: (url) {
+                      Utils.launchURL(url);
+                    }),
               ),
             )
           : Text("");
