@@ -7,5 +7,6 @@
 - [x] Routing
 - [x] Linkoff from within stories
 - [x] Jobs feed
+- [x] Collapsible comment threads
+- [ ] Timestamps
 - [ ] Infinite Scroll
-- [ ] Collapsible comment threads
