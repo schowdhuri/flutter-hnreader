@@ -47,11 +47,13 @@ class _CollapsibleState extends State<Collapsible> {
   Widget build(BuildContext context) {
     return Container(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           GestureDetector(
             onLongPress: handleClose,
             onTap: handleOpen,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 header,
                 SizedBox(height: 10),

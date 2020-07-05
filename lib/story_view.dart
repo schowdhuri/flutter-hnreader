@@ -125,13 +125,14 @@ class _StoryViewState extends State<StoryView> {
     );
   }
 
-  Widget buildCommentTree(HNStory storyDetails, {int depth}) {
-    Widget buildComment(HNStory storyDetails, {List<Widget> children}) {
+  Widget buildCommentTree(HNStory storyDetails) {
+    Widget buildComment(HNStory storyDetails, {List<Widget> kids}) {
       return storyDetails.text != null
           ? Padding(
-              padding: EdgeInsets.fromLTRB(10 + 20.0 * depth, 10, 10, 10),
+              padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
               child: Collapsible(
                 header: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Icon(
                       Icons.comment,
@@ -148,32 +149,45 @@ class _StoryViewState extends State<StoryView> {
                     ),
                   ],
                 ),
-                child: Html(
-                    data: storyDetails.text,
-                    defaultTextStyle: TextStyle(
-                      fontSize: 14,
-                    ),
-                    onLinkTap: (url) {
-                      Utils.launchURL(url);
-                    }),
+                child: Padding(
+                  padding: EdgeInsets.only(left: 5),
+                  child: Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          left: BorderSide(
+                            width: 1.0,
+                            color: Colors.blueGrey[100],
+                          ),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Html(
+                                data: storyDetails.text,
+                                defaultTextStyle: TextStyle(
+                                  fontSize: 14,
+                                ),
+                                onLinkTap: (url) {
+                                  Utils.launchURL(url);
+                                }),
+                            ...kids,
+                          ],
+                        ),
+                      )),
+                ),
               ),
             )
-          : Text("");
+          : Container();
     }
 
-    if (depth == null) {
-      depth = 0;
-    }
-    if (storyDetails.kidsDetails.length > 0) {
-      return Column(
-        children: <Widget>[
-          buildComment(storyDetails),
-          for (HNStory kid in storyDetails.kidsDetails)
-            buildCommentTree(kid, depth: depth + 1)
-        ],
-      );
-    }
-    return buildComment(storyDetails);
+    List<Widget> kids =
+        List.generate(storyDetails.kidsDetails.length, (int index) {
+      return buildCommentTree(storyDetails.kidsDetails[index]);
+    });
+    return buildComment(storyDetails, kids: kids);
   }
 
   @override
@@ -194,7 +208,8 @@ class _StoryViewState extends State<StoryView> {
               children: <Widget>[
                 buildStoryTitle(storyDetails),
                 for (HNStory kid in storyDetails.kidsDetails)
-                  buildCommentTree(kid)
+                  buildCommentTree(kid),
+                SizedBox(height: 20),
               ],
             )
           : Center(
