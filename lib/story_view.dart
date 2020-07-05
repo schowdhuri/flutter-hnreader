@@ -129,7 +129,7 @@ class _StoryViewState extends State<StoryView> {
     Widget buildComment(HNStory storyDetails, {List<Widget> kids}) {
       return storyDetails.text != null
           ? Padding(
-              padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+              padding: EdgeInsets.fromLTRB(10, 20, 0, 0),
               child: Collapsible(
                 header: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -204,13 +204,16 @@ class _StoryViewState extends State<StoryView> {
         backgroundColor: Colors.deepOrangeAccent,
       ),
       body: storyDetails != null
-          ? ListView(
-              children: <Widget>[
-                buildStoryTitle(storyDetails),
-                for (HNStory kid in storyDetails.kidsDetails)
-                  buildCommentTree(kid),
-                SizedBox(height: 20),
-              ],
+          ? Padding(
+              padding: EdgeInsets.only(right: 10),
+              child: ListView(
+                children: <Widget>[
+                  buildStoryTitle(storyDetails),
+                  for (HNStory kid in storyDetails.kidsDetails)
+                    buildCommentTree(kid),
+                  SizedBox(height: 20),
+                ],
+              ),
             )
           : Center(
               child: CircularProgressIndicator(),

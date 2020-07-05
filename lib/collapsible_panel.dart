@@ -17,16 +17,22 @@ class Collapsible extends StatefulWidget {
       );
 }
 
-class _CollapsibleState extends State<Collapsible> {
+class _CollapsibleState extends State<Collapsible>
+    with SingleTickerProviderStateMixin {
   final Widget header;
   final Widget child;
   bool _isOpen = true;
+
+  double _contentHeight;
+  AnimationController expandController;
+  Animation<double> animation;
 
   handleOpen() {
     if (!_isOpen) {
       setState(() {
         _isOpen = true;
       });
+      expandController.forward();
     }
   }
 
@@ -35,6 +41,7 @@ class _CollapsibleState extends State<Collapsible> {
       setState(() {
         _isOpen = false;
       });
+      expandController.reverse();
     }
   }
 
@@ -42,6 +49,38 @@ class _CollapsibleState extends State<Collapsible> {
     @required this.header,
     @required this.child,
   });
+
+  void prepareAnimations() {
+    expandController = AnimationController(
+      value: 1,
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    );
+    animation = CurvedAnimation(
+      parent: expandController,
+      curve: Curves.fastOutSlowIn,
+    );
+  }
+
+  void _runExpandCheck() {
+    if (_isOpen) {
+      expandController.forward();
+    } else {
+      expandController.reverse();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    prepareAnimations();
+  }
+
+  @override
+  void dispose() {
+    expandController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,10 +96,11 @@ class _CollapsibleState extends State<Collapsible> {
               children: <Widget>[
                 header,
                 SizedBox(height: 10),
-                Container(
-                  height: _isOpen ? null : 0,
+                SizeTransition(
+                  axisAlignment: 1.0,
+                  sizeFactor: animation,
                   child: child,
-                )
+                ),
               ],
             ),
           ),
