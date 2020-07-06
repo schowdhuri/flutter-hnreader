@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hnreader/collapsible_panel.dart';
+import 'package:hnreader/story_view_comments.dart';
+import 'package:hnreader/story_view_title.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:hnreader/hnitem.dart';
 import 'package:hnreader/hnstory_details.dart';
-import 'package:hnreader/utils.dart';
 
 class StoryView extends StatefulWidget {
   final HNItem story;
@@ -48,146 +47,12 @@ class _StoryViewState extends State<StoryView> {
     setState(() {});
   }
 
-  Widget buildStoryTitle(HNStory storyDetails) {
-    final titleStyle = TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 16,
-    );
-    final titleButtonStyle = TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 16,
-      color: Colors.blueAccent,
-    );
-    return Padding(
-      padding: EdgeInsets.all(10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(top: 10, bottom: 10),
-            child: storyDetails.url != null
-                ? FlatButton(
-                    padding: EdgeInsets.all(0),
-                    child: Row(
-                      children: <Widget>[
-                        Flexible(
-                          child: Text(
-                            storyDetails.title,
-                            style: titleButtonStyle,
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Icon(
-                          Icons.launch,
-                          color: Colors.blueGrey,
-                          size: 16,
-                        ),
-                      ],
-                    ),
-                    onPressed: () {
-                      Utils.launchURL(storyDetails.url);
-                    },
-                  )
-                : Text(
-                    storyDetails.title,
-                    style: titleStyle,
-                  ),
-          ),
-          Row(
-            children: <Widget>[
-              Text(
-                "${storyDetails.score} points by ${storyDetails.by}",
-                style: TextStyle(
-                  color: Colors.blueGrey,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 10),
-          storyDetails.text != null
-              ? Html(
-                  data: storyDetails.text,
-                  defaultTextStyle: TextStyle(
-                    fontSize: 14,
-                  ),
-                  onLinkTap: (url) {
-                    Utils.launchURL(url);
-                  },
-                )
-              : Text(""),
-          SizedBox(
-            height: 10,
-            child: Divider(),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget buildCommentTree(HNStory storyDetails) {
-    Widget buildComment(HNStory storyDetails, {List<Widget> kids}) {
-      return storyDetails.text != null
-          ? Padding(
-              padding: EdgeInsets.fromLTRB(10, 20, 0, 0),
-              child: Collapsible(
-                header: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Icon(
-                      Icons.comment,
-                      color: Colors.blueGrey,
-                      size: 14,
-                    ),
-                    SizedBox(width: 5),
-                    Text(
-                      storyDetails.by,
-                      style: TextStyle(
-                        color: Colors.blueGrey,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: EdgeInsets.only(left: 5),
-                  child: Container(
-                      decoration: BoxDecoration(
-                        border: Border(
-                          left: BorderSide(
-                            width: 1.0,
-                            color: Colors.blueGrey[100],
-                          ),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Html(
-                                data: storyDetails.text,
-                                defaultTextStyle: TextStyle(
-                                  fontSize: 14,
-                                ),
-                                onLinkTap: (url) {
-                                  Utils.launchURL(url);
-                                }),
-                            ...kids,
-                          ],
-                        ),
-                      )),
-                ),
-              ),
-            )
-          : Container();
-    }
-
     List<Widget> kids =
         List.generate(storyDetails.kidsDetails.length, (int index) {
       return buildCommentTree(storyDetails.kidsDetails[index]);
     });
-    return buildComment(storyDetails, kids: kids);
+    return StoryComments(storyDetails, kids: kids);
   }
 
   @override
@@ -208,7 +73,7 @@ class _StoryViewState extends State<StoryView> {
               padding: EdgeInsets.only(right: 10),
               child: ListView(
                 children: <Widget>[
-                  buildStoryTitle(storyDetails),
+                  StoryTitle(storyDetails),
                   for (HNStory kid in storyDetails.kidsDetails)
                     buildCommentTree(kid),
                   SizedBox(height: 20),
