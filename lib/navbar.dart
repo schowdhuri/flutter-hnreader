@@ -1,30 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:hnreader/categories.dart';
 
-class BotNavBar extends StatefulWidget {
-  final onChange;
-  BotNavBar(this.onChange, {Key key}) : super(key: key);
-  @override
-  _BotNavBarState createState() => _BotNavBarState(onChange);
-}
+class BotNavBar extends StatelessWidget {
+  final Function onChange;
+  final Category category;
+  BotNavBar({
+    this.onChange,
+    this.category,
+    Key key,
+  }) : super(key: key);
 
-class _BotNavBarState extends State<BotNavBar> {
-  final onChange;
-  _BotNavBarState(this.onChange) : super();
-  int _currentPage = 0;
   handleChangePage(int newPage) {
-    setState(() {
-      _currentPage = newPage;
-    });
     onChange(Category.list[newPage]);
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentIndex = Category.list.indexOf(category);
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       showUnselectedLabels: true,
-      currentIndex: _currentPage,
+      currentIndex: currentIndex,
       onTap: handleChangePage,
       selectedItemColor: Colors.deepOrangeAccent,
       unselectedItemColor: Colors.grey,
