@@ -18,6 +18,7 @@ class StoryView extends StatefulWidget {
 class _StoryViewState extends State<StoryView> {
   final HNItem story;
   HNStory storyDetails;
+  bool _isFetching = false;
 
   _StoryViewState(this.story);
 
@@ -39,12 +40,14 @@ class _StoryViewState extends State<StoryView> {
   }
 
   Future<void> fetchStory() async {
-    print("Fetching ${story.id}");
     setState(() {
-      storyDetails = null;
+      _isFetching = true;
     });
+    print("Fetching ${story.id}");
     storyDetails = await fetchItem(story.id);
-    setState(() {});
+    setState(() {
+      _isFetching = false;
+    });
   }
 
   Widget buildCommentTree(HNStory storyDetails) {
@@ -68,20 +71,23 @@ class _StoryViewState extends State<StoryView> {
         title: Text(story.title),
         backgroundColor: Colors.deepOrangeAccent,
       ),
-      body: storyDetails != null
-          ? Padding(
-              padding: EdgeInsets.only(right: 10),
-              child: ListView(
-                children: <Widget>[
-                  StoryTitle(storyDetails),
-                  for (HNStory kid in storyDetails.kidsDetails)
-                    buildCommentTree(kid),
-                  SizedBox(height: 20),
-                ],
-              ),
-            )
-          : Center(
+      body: _isFetching
+          ? Center(
               child: CircularProgressIndicator(),
+            )
+          : RefreshIndicator(
+              onRefresh: fetchStory,
+              child: Padding(
+                padding: EdgeInsets.only(right: 10),
+                child: ListView(
+                  children: <Widget>[
+                    StoryTitle(storyDetails),
+                    for (HNStory kid in storyDetails.kidsDetails)
+                      buildCommentTree(kid),
+                    SizedBox(height: 20),
+                  ],
+                ),
+              ),
             ),
     );
   }

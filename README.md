@@ -8,8 +8,7 @@
 - [x] Linkoff from within stories
 - [x] Jobs feed
 - [x] Collapsible comment threads
-- [x] Routes for tabs
+- [x] Pull to refresh story
 - [ ] Timestamps
 - [ ] Error messages
-- [ ] Pull to refresh story
 - [ ] Infinite Scroll
