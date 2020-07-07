@@ -5,11 +5,7 @@ import 'package:hnreader/story_view.dart';
 
 class Routes {
   static Route<dynamic> generateRoutes(RouteSettings settings) {
-    if (settings.name == "/" ||
-        settings.name == "/${Category.TOP.id}" ||
-        settings.name == "/${Category.JOBS.id}" ||
-        settings.name == "/${Category.ASK.id}" ||
-        settings.name == "/${Category.NEW.id}") {
+    if (settings.name == "/") {
       final FeedViewArgs args =
           settings.arguments ?? FeedViewArgs(Category.list[0]);
       print("Page ${args.category.name}");

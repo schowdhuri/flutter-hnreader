@@ -9,19 +9,19 @@ import 'package:hnreader/story_view.dart';
 import 'package:hnreader/utils.dart';
 
 class FeedView extends StatefulWidget {
-  final FeedViewArgs args;
-  FeedView(this.args, {Key key}) : super(key: key);
+  final FeedViewArgs _args;
+  FeedView(this._args, {Key key}) : super(key: key);
 
   @override
-  _FeedViewState createState() => _FeedViewState(this.args);
+  _FeedViewState createState() => _FeedViewState(_args.category);
 }
 
 class _FeedViewState extends State<FeedView> {
-  final FeedViewArgs args;
+  Category _category;
   List<HNItem> _stories = [];
   String _error;
 
-  _FeedViewState(this.args) : super();
+  _FeedViewState(this._category) : super();
 
   Future<HNItem> fetchItem(int id) async {
     print("Fetching item #$id");
@@ -36,11 +36,11 @@ class _FeedViewState extends State<FeedView> {
   }
 
   Future<void> fetchStories() async {
-    print("Fetching ${args.category.name} stories...");
+    print("Fetching ${_category.name} stories...");
     _stories = [];
     _error = null;
     try {
-      final http.Response response = await http.get(args.category.url);
+      final http.Response response = await http.get(_category.url);
 
       if (response.statusCode == 200) {
         List<int> storyIds = List<int>.from(json.decode(response.body));
@@ -59,16 +59,15 @@ class _FeedViewState extends State<FeedView> {
     throw Exception("Failed to load feed");
   }
 
-  handleChangePage(BuildContext ctx) => (Category category) {
-        Navigator.pushReplacementNamed(
-          ctx,
-          "/${category.id}",
-          arguments: FeedViewArgs(category),
-        );
-      };
+  handleChangePage(Category category) {
+    setState(() {
+      _category = category;
+      fetchStories();
+    });
+  }
 
   handleOpenStory(BuildContext context) => (HNItem story) {
-        if (args.category.id == Category.JOBS.id) {
+        if (_category.id == Category.JOBS.id) {
           Utils.launchURL(story.url);
         } else {
           Navigator.pushNamed(
@@ -97,15 +96,15 @@ class _FeedViewState extends State<FeedView> {
       body: SafeArea(
         child: Feed(
           stories: _stories,
-          category: args.category,
+          category: _category,
           error: _error,
           onRefresh: fetchStories,
           onOpenStory: handleOpenStory(context),
         ),
       ),
       bottomNavigationBar: BotNavBar(
-        onChange: handleChangePage(context),
-        category: args.category,
+        onChange: handleChangePage,
+        category: _category,
       ),
     );
   }
