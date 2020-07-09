@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 
+typedef Widget HeaderBuilder(BuildContext context, bool isOpen);
+
 class Collapsible extends StatefulWidget {
-  final Widget header;
+  final HeaderBuilder headerBuilder;
   final Widget child;
 
   Collapsible({
-    @required this.header,
+    @required this.headerBuilder,
     @required this.child,
     Key key,
   }) : super(key: key);
 
   @override
   _CollapsibleState createState() => _CollapsibleState(
-        header: this.header,
+        headerBuilder: this.headerBuilder,
         child: this.child,
       );
 }
 
 class _CollapsibleState extends State<Collapsible>
     with SingleTickerProviderStateMixin {
-  final Widget header;
+  final HeaderBuilder headerBuilder;
   final Widget child;
   bool _isOpen = true;
 
@@ -46,7 +48,7 @@ class _CollapsibleState extends State<Collapsible>
   }
 
   _CollapsibleState({
-    @required this.header,
+    @required this.headerBuilder,
     @required this.child,
   });
 
@@ -94,7 +96,7 @@ class _CollapsibleState extends State<Collapsible>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                header,
+                headerBuilder(context, _isOpen),
                 SizedBox(height: 10),
                 SizeTransition(
                   axisAlignment: 1.0,

@@ -58,7 +58,7 @@ class StoryTitle extends StatelessWidget {
           Row(
             children: <Widget>[
               Text(
-                "${story.score} points by ${story.by}",
+                "${story.score} points by ${story.by} | ${story.descendants} comments",
                 style: TextStyle(
                   color: Colors.blueGrey,
                   fontSize: 12,

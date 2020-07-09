@@ -3,7 +3,6 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:hnreader/hnstory_details.dart';
 import 'package:hnreader/utils.dart';
-
 import 'package:hnreader/collapsible_panel.dart';
 
 class StoryComments extends StatelessWidget {
@@ -11,6 +10,14 @@ class StoryComments extends StatelessWidget {
   final List<Widget> kids;
 
   StoryComments(this.story, {this.kids, Key key}) : super(key: key);
+
+  int getDescendants(HNStory story) {
+    int sum = story.kidsDetails.length;
+    for (HNStory kid in story.kidsDetails) {
+      sum += getDescendants(kid);
+    }
+    return sum;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +27,10 @@ class StoryComments extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 20, 0, 0),
       child: Collapsible(
-        header: Container(
+        headerBuilder: (BuildContext context, bool isOpen) => Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.transparent),
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -45,7 +55,23 @@ class StoryComments extends StatelessWidget {
                   color: Colors.blueGrey,
                   fontSize: 12,
                 ),
-              )
+              ),
+              SizedBox(width: 5),
+              !isOpen && story.kids.length > 0
+                  ? Text(
+                      "[+${getDescendants(story)} more]",
+                      style: TextStyle(
+                        color: Colors.blueGrey,
+                        fontSize: 12,
+                      ),
+                    )
+                  : Text(
+                      "[-]",
+                      style: TextStyle(
+                        color: Colors.blueGrey,
+                        fontSize: 12,
+                      ),
+                    ),
             ],
           ),
         ),
