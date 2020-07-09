@@ -9,6 +9,6 @@
 - [x] Jobs feed
 - [x] Collapsible comment threads
 - [x] Pull to refresh story
-- [ ] Timestamps
+- [x] Timestamps
 - [ ] Error messages
 - [ ] Infinite Scroll

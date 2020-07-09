@@ -58,7 +58,7 @@ class HNStory {
                 data["kidsDetails"].map(HNStory.fromJSON).toList())
             : [],
         score: data["score"],
-        time: data["score"],
+        time: data["time"],
         title: data["title"],
         text: data["text"],
         type: data["type"],

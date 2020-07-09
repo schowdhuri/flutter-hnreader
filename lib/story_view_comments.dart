@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import 'package:hnreader/hnstory_details.dart';
 import 'package:hnreader/utils.dart';
 
@@ -19,23 +20,34 @@ class StoryComments extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 20, 0, 0),
       child: Collapsible(
-        header: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Icon(
-              Icons.comment,
-              color: Colors.blueGrey,
-              size: 14,
-            ),
-            SizedBox(width: 5),
-            Text(
-              story.by,
-              style: TextStyle(
+        header: Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Icon(
+                Icons.comment,
                 color: Colors.blueGrey,
-                fontSize: 12,
+                size: 14,
               ),
-            ),
-          ],
+              SizedBox(width: 5),
+              Text(
+                story.by,
+                style: TextStyle(
+                  color: Colors.blueGrey,
+                  fontSize: 12,
+                ),
+              ),
+              SizedBox(width: 5),
+              Text(
+                timeago.format(
+                    DateTime.fromMillisecondsSinceEpoch(story.time * 1000)),
+                style: TextStyle(
+                  color: Colors.blueGrey,
+                  fontSize: 12,
+                ),
+              )
+            ],
+          ),
         ),
         child: Padding(
           padding: EdgeInsets.only(left: 5),
