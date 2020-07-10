@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:hnreader/categories.dart';
 import 'package:hnreader/feed.dart';
-import 'package:hnreader/hnitem.dart';
+import 'package:hnreader/models/hnitem.dart';
 import 'package:hnreader/navbar.dart';
 import 'package:hnreader/story_view.dart';
 import 'package:hnreader/utils.dart';
@@ -37,26 +37,30 @@ class _FeedViewState extends State<FeedView> {
 
   Future<void> fetchStories() async {
     print("Fetching ${_category.name} stories...");
-    _stories = [];
-    _error = null;
+    setState(() {
+      _stories = [];
+      _error = null;
+    });
+    final http.Response response = await http.get(_category.url);
     try {
-      final http.Response response = await http.get(_category.url);
-
-      if (response.statusCode == 200) {
-        List<int> storyIds = List<int>.from(json.decode(response.body));
-        List<int> page = storyIds.sublist(0, 10);
-        List<Future<HNItem>> futures = page.map((int id) {
-          return fetchItem(id);
-        }).toList();
-        _stories = await Future.wait(futures);
-        print("${_stories.length} stories fetched");
-        setState(() {});
-        return;
+      if (response.statusCode != 200) {
+        throw Exception("Error fetching feed");
       }
-    } catch (ex) {
-      _error = ex.toString();
+      List<int> storyIds = List<int>.from(json.decode(response.body));
+      List<int> page = storyIds.sublist(0, 10);
+      List<Future<HNItem>> futures = page.map((int id) {
+        return fetchItem(id);
+      }).toList();
+      _stories = await Future.wait(futures);
+      print("${_stories.length} stories fetched");
+      setState(() {
+        _error = null;
+      });
+    } catch (ex0) {
+      setState(() {
+        _error = "Stories could not be fetched because of an error";
+      });
     }
-    throw Exception("Failed to load feed");
   }
 
   handleChangePage(Category category) {

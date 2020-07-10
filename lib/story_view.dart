@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:hnreader/story_view_comments.dart';
 import 'package:hnreader/story_view_title.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:hnreader/hnitem.dart';
-import 'package:hnreader/hnstory_details.dart';
+import 'package:hnreader/models/hnitem.dart';
+import 'package:hnreader/models/hnstory_details.dart';
 
 class StoryView extends StatefulWidget {
   final HNItem story;
@@ -19,6 +20,7 @@ class _StoryViewState extends State<StoryView> {
   final HNItem story;
   HNStory storyDetails;
   bool _isFetching = false;
+  String _error;
 
   _StoryViewState(this.story);
 
@@ -44,10 +46,19 @@ class _StoryViewState extends State<StoryView> {
       _isFetching = true;
     });
     print("Fetching ${story.id}");
-    storyDetails = await fetchItem(story.id);
-    setState(() {
-      _isFetching = false;
-    });
+    try {
+      storyDetails = await fetchItem(story.id);
+      setState(() {
+        _isFetching = false;
+        _error = null;
+      });
+    } catch (ex0) {
+      print(ex0);
+      setState(() {
+        _error = "There was an error fetching this story";
+        _isFetching = false;
+      });
+    }
   }
 
   Widget buildCommentTree(HNStory storyDetails) {
@@ -77,17 +88,42 @@ class _StoryViewState extends State<StoryView> {
             )
           : RefreshIndicator(
               onRefresh: fetchStory,
-              child: Padding(
-                padding: EdgeInsets.only(right: 10),
-                child: ListView(
-                  children: <Widget>[
-                    StoryTitle(storyDetails),
-                    for (HNStory kid in storyDetails.kidsDetails)
-                      buildCommentTree(kid),
-                    SizedBox(height: 20),
-                  ],
-                ),
-              ),
+              child: _error != null
+                  ? Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(_error),
+                          FlatButton(
+                            onPressed: fetchStory,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("Try Again"),
+                                SizedBox(width: 5),
+                                Icon(
+                                  Icons.refresh,
+                                  color: Colors.orangeAccent,
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  : Padding(
+                      padding: EdgeInsets.only(right: 10),
+                      child: ListView(
+                        children: <Widget>[
+                          StoryTitle(storyDetails),
+                          for (HNStory kid in storyDetails.kidsDetails)
+                            buildCommentTree(kid),
+                          SizedBox(height: 20),
+                        ],
+                      ),
+                    ),
             ),
     );
   }

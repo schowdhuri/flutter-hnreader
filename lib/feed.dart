@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hnreader/categories.dart';
 import 'package:hnreader/feed_item.dart';
-import 'package:hnreader/hnitem.dart';
+import 'package:hnreader/models/hnitem.dart';
 
 class Feed extends StatelessWidget {
   final List<HNItem> stories;
-  final onRefresh;
-  final onOpenStory;
+  final Function onRefresh;
+  final Function onOpenStory;
   final Category category;
   final String error;
 
@@ -22,8 +22,29 @@ class Feed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (error != null) {
-      return Center(
-        child: Text(error),
+      return Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(error),
+            FlatButton(
+              onPressed: onRefresh,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Try Again"),
+                  SizedBox(width: 5),
+                  Icon(
+                    Icons.refresh,
+                    color: Colors.orangeAccent,
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       );
     }
     return stories.length > 0

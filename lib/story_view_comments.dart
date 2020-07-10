@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:hnreader/hnstory_details.dart';
+import 'package:hnreader/models/hnstory_details.dart';
 import 'package:hnreader/utils.dart';
 import 'package:hnreader/collapsible_panel.dart';
 

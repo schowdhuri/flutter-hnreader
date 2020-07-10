@@ -10,5 +10,5 @@
 - [x] Collapsible comment threads
 - [x] Pull to refresh story
 - [x] Timestamps
-- [ ] Error messages
+- [x] Error messages
 - [ ] Infinite Scroll
