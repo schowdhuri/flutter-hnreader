@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hnreader/categories.dart';
+import 'package:hnreader/models/categories.dart';
 
 class BotNavBar extends StatelessWidget {
   final Function onChange;

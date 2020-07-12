@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hnreader/categories.dart';
-import 'package:hnreader/feed_view.dart';
-import 'package:hnreader/story_view.dart';
+import 'package:hnreader/models/categories.dart';
+import 'package:hnreader/screens/feed_view.dart';
+import 'package:hnreader/screens/story_view.dart';
 
 class Routes {
   static Route<dynamic> generateRoutes(RouteSettings settings) {

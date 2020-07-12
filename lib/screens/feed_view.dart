@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:hnreader/categories.dart';
-import 'package:hnreader/feed.dart';
+import 'package:hnreader/models/categories.dart';
+import 'package:hnreader/widgets/feed.dart';
 import 'package:hnreader/models/hnitem.dart';
-import 'package:hnreader/navbar.dart';
-import 'package:hnreader/story_view.dart';
+import 'package:hnreader/widgets/navbar.dart';
+import 'package:hnreader/screens/story_view.dart';
 import 'package:hnreader/utils.dart';
 
 class FeedView extends StatefulWidget {

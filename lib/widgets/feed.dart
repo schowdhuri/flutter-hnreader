@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hnreader/categories.dart';
-import 'package:hnreader/feed_item.dart';
+import 'package:hnreader/models/categories.dart';
+import 'package:hnreader/widgets/feed_item.dart';
 import 'package:hnreader/models/hnitem.dart';
 
 class Feed extends StatelessWidget {

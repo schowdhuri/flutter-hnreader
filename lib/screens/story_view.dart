@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:hnreader/story_view_comments.dart';
-import 'package:hnreader/story_view_title.dart';
+import 'package:hnreader/widgets/story_view_comments.dart';
+import 'package:hnreader/widgets/story_view_title.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:hnreader/models/hnitem.dart';

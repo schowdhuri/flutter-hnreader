@@ -3,7 +3,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:hnreader/models/hnstory_details.dart';
 import 'package:hnreader/utils.dart';
-import 'package:hnreader/collapsible_panel.dart';
+import 'package:hnreader/widgets/collapsible_panel.dart';
 
 class StoryComments extends StatelessWidget {
   final HNStory story;
