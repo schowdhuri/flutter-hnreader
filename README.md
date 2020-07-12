@@ -11,4 +11,4 @@
 - [x] Pull to refresh story
 - [x] Timestamps
 - [x] Error messages
-- [ ] Infinite Scroll
+- [x] Infinite Scroll
