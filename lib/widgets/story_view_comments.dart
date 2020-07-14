@@ -12,6 +12,9 @@ class StoryComments extends StatelessWidget {
   StoryComments(this.story, {this.kids, Key key}) : super(key: key);
 
   int getDescendants(HNStory story) {
+    if (story == null) {
+      return 0;
+    }
     int sum = story.kidsDetails.length;
     for (HNStory kid in story.kidsDetails) {
       sum += getDescendants(kid);

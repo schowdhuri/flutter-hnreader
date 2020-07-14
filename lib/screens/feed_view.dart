@@ -17,7 +17,7 @@ class FeedView extends StatefulWidget {
   FeedView(this.args, {Key key}) : super(key: key);
 
   @override
-  _FeedViewState createState() => _FeedViewState();
+  _FeedViewState createState() => _FeedViewState(args);
 }
 
 class _FeedViewState extends State<FeedView> {
@@ -26,6 +26,11 @@ class _FeedViewState extends State<FeedView> {
   int _pageNum = 0;
   bool _isLoadingMore = false;
   String _error;
+  Category _category;
+
+  _FeedViewState(FeedViewArgs args) : super() {
+    this._category = args.category;
+  }
 
   Future<HNItem> fetchItem(int id) async {
     print("Fetching item #$id");
@@ -40,8 +45,7 @@ class _FeedViewState extends State<FeedView> {
   }
 
   Future<List<int>> fetchStoryIds() async {
-    final http.Response response =
-        await http.get(this.widget.args.category.url);
+    final http.Response response = await http.get(_category.url);
     if (response.statusCode != 200) {
       throw Exception("Error fetching feed");
     }
@@ -50,7 +54,7 @@ class _FeedViewState extends State<FeedView> {
 
   Future<void> fetchStories([bool isMore = false]) async {
     if (!isMore) {
-      print("Fetching ${this.widget.args.category.name} stories...");
+      print("Fetching ${_category.name} stories...");
       setState(() {
         _stories = [];
         _error = null;
@@ -63,8 +67,7 @@ class _FeedViewState extends State<FeedView> {
         });
       }
     } else if (!_isLoadingMore) {
-      print(
-          "Fetching ${this.widget.args.category.name} stories page ${_pageNum + 2}...");
+      print("Fetching ${_category.name} stories page ${_pageNum + 2}...");
       setState(() {
         _isLoadingMore = true;
         _pageNum += 1;
@@ -80,7 +83,7 @@ class _FeedViewState extends State<FeedView> {
         return fetchItem(id);
       }).toList();
       List<HNItem> newStories = await Future.wait(futures);
-      print("${_stories.length} stories fetched");
+      print("${newStories.length} stories fetched");
       setState(() {
         _stories = [..._stories, ...newStories];
         _error = null;
@@ -97,14 +100,16 @@ class _FeedViewState extends State<FeedView> {
 
   handleChangePage(Category category) {
     setState(() {
-      category = category;
+      _category = category;
+      _pageNum = 0;
+      _error = null;
       fetchStories();
     });
   }
 
   handleOpenStory(BuildContext context) {
     void _openStory(HNItem story) {
-      if (this.widget.args.category.id == Category.JOBS.id) {
+      if (_category.id == Category.JOBS.id) {
         Utils.launchURL(story.url);
       } else {
         Navigator.pushNamed(
@@ -136,7 +141,7 @@ class _FeedViewState extends State<FeedView> {
       body: SafeArea(
         child: Feed(
             stories: _stories,
-            category: this.widget.args.category,
+            category: _category,
             error: _error,
             onRefresh: fetchStories,
             onOpenStory: handleOpenStory(context),
@@ -146,7 +151,7 @@ class _FeedViewState extends State<FeedView> {
       ),
       bottomNavigationBar: BotNavBar(
         onChange: handleChangePage,
-        category: this.widget.args.category,
+        category: _category,
       ),
     );
   }

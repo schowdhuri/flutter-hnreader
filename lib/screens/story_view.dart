@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hnreader/widgets/story_view_comments.dart';
+import 'package:hnreader/widgets/story_view_error.dart';
 import 'package:hnreader/widgets/story_view_title.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -62,6 +63,9 @@ class _StoryViewState extends State<StoryView> {
   }
 
   Widget buildCommentTree(HNStory storyDetails) {
+    if (storyDetails == null) {
+      return Container();
+    }
     List<Widget> kids =
         List.generate(storyDetails.kidsDetails.length, (int index) {
       return buildCommentTree(storyDetails.kidsDetails[index]);
@@ -86,45 +90,25 @@ class _StoryViewState extends State<StoryView> {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : RefreshIndicator(
-              onRefresh: fetchStory,
-              child: _error != null
-                  ? Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(_error),
-                          FlatButton(
-                            onPressed: fetchStory,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text("Try Again"),
-                                SizedBox(width: 5),
-                                Icon(
-                                  Icons.refresh,
-                                  color: Colors.orangeAccent,
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                  : Padding(
-                      padding: EdgeInsets.only(right: 10),
-                      child: ListView(
-                        children: <Widget>[
-                          StoryTitle(storyDetails),
-                          for (HNStory kid in storyDetails.kidsDetails)
-                            buildCommentTree(kid),
-                          SizedBox(height: 20),
-                        ],
-                      ),
+          : _error != null
+              ? StoryViewError(
+                  error: _error,
+                  fetchStory: fetchStory,
+                )
+              : RefreshIndicator(
+                  onRefresh: fetchStory,
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 10),
+                    child: ListView(
+                      children: <Widget>[
+                        StoryTitle(storyDetails),
+                        for (HNStory kid in storyDetails.kidsDetails)
+                          buildCommentTree(kid),
+                        SizedBox(height: 20),
+                      ],
                     ),
-            ),
+                  ),
+                ),
     );
   }
 }

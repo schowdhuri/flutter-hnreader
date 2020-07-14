@@ -35,7 +35,7 @@ class _FeedState extends State<Feed> {
     super.initState();
     _scrollCtrl.addListener(() {
       if (_scrollCtrl.position.pixels >
-          0.9 * _scrollCtrl.position.maxScrollExtent) {
+          0.75 * _scrollCtrl.position.maxScrollExtent) {
         this.widget.onLoadMore();
       }
     });
@@ -61,8 +61,16 @@ class _FeedState extends State<Feed> {
         controller: _scrollCtrl,
         child: ListView.separated(
           controller: _scrollCtrl,
-          itemCount: this.widget.stories.length,
+          itemCount: this.widget.stories.length + 1,
           itemBuilder: (BuildContext ctx, int index) {
+            if (index == this.widget.stories.length) {
+              return ListTile(
+                contentPadding: EdgeInsets.all(10),
+                title: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
             return FeedItem(
               this.widget.stories[index],
               onTap: this.widget.onOpenStory,
